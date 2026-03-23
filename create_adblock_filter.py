@@ -10,6 +10,15 @@ def create_filters():
     hosts_file = "hosts_filter.txt"
     
     domains = set()
+    
+    # 誤検知を防ぐためのホワイトリスト（著名なリダイレクトや短縮URL事業者など）
+    whitelist = {
+        'www.google.com', 'google.com', 'translate.google.com', 'translate.goog',
+        't.co', 'bit.ly', 'tinyurl.com', 'ow.ly', 'is.gd', 'goo.gl',
+        'bing.com', 'www.bing.com', 'yahoo.co.jp', 'search.yahoo.co.jp',
+        'youtube.com', 'www.youtube.com', 'facebook.com', 'www.facebook.com',
+        'instagram.com', 'twitter.com', 'x.com', 'line.me'
+    }
 
     print("CSVファイルからURLを抽出し、ドメインを解析しています...")
     
@@ -40,9 +49,9 @@ def create_filters():
                                     if ':' in domain:
                                         domain = domain.split(':')[0]
                                     
-                                    # IPアドレスやドメインとして有効な文字列か簡易チェック
-                                    if domain and '.' in domain:
-                                        domains.add(domain)
+                                    # IPアドレスやドメインとして有効な文字列か簡易チェック、かつホワイトリスト除外
+                                    if domain and '.' in domain and domain.lower() not in whitelist:
+                                        domains.add(domain.lower())
                                 except Exception:
                                     pass
 
